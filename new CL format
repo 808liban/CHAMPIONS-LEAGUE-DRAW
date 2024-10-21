@@ -1,0 +1,58 @@
+import random
+import time
+
+teams = {
+    "Arsenal": "England", "Manchester City": "England", "Chelsea": "England", 
+    "Liverpool": "England", "Tottenham": "England",
+    "Real Madrid": "Spain", "Barcelona": "Spain", "Atlético Madrid": "Spain", 
+    "Sevilla": "Spain", "Real Sociedad": "Spain",
+    "Bayern Munich": "Germany", "Borussia Dortmund": "Germany", "RB Leipzig": "Germany", 
+    "Bayer Leverkusen": "Germany", "Wolfsburg": "Germany",
+    "Juventus": "Italy", "AC Milan": "Italy", "Inter Milan": "Italy", 
+    "Napoli": "Italy", "Roma": "Italy",
+    "Paris Saint-Germain": "France", "Lyon": "France", "Marseille": "France", 
+    "Monaco": "France", "Lille": "France",
+    "Benfica": "Portugal", "Porto": "Portugal", "Sporting CP": "Portugal", 
+    "Braga": "Portugal", "Vitória Guimarães": "Portugal",
+    "Ajax": "Netherlands", "PSV Eindhoven": "Netherlands", "Feyenoord": "Netherlands", 
+    "AZ Alkmaar": "Netherlands", "Utrecht": "Netherlands"
+}
+
+matches_per_team = 8
+
+def perform_draw():
+    all_matches = {team: [] for team in teams}  
+
+    for team_name in teams:
+        if len(all_matches[team_name]) >= matches_per_team:
+            continue  
+
+        matches = []  
+        team_country = teams[team_name]
+                
+        valid_opponents = [opponent for opponent in teams if opponent != team_name and teams[opponent] != team_country]
+        
+        selected_opponents = random.sample(valid_opponents, min(matches_per_team, len(valid_opponents)))
+
+        home_away_choices = ['(H)', '(A)'] * (matches_per_team // 2) + ['(H)', '(A)'][:matches_per_team % 2]  
+        random.shuffle(home_away_choices) 
+
+        for opponent, location in zip(selected_opponents, home_away_choices):
+            if len(all_matches[team_name]) < matches_per_team and len(all_matches[opponent]) < matches_per_team:
+                match = f"{team_name} vs {opponent} {location}"
+                matches.append(match)
+                
+                reciprocal_location = '(H)' if location == '(A)' else '(A)'
+                all_matches[opponent].append(f"{opponent} vs {team_name} {reciprocal_location}")
+
+        all_matches[team_name].extend(matches)
+
+    for team_name in teams:
+        print(f"\nChampions League Draw for {team_name}:")
+        for match in all_matches[team_name][:matches_per_team]:  
+            print(match)
+            time.sleep(1.2)
+
+perform_draw()
+
+print("\nAll draws have been completed!")
